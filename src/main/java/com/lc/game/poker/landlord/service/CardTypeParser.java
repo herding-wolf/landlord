@@ -26,7 +26,7 @@ public interface CardTypeParser extends Comparator<SingleCardType> {
     boolean hasCardType(CombinationCard combinationCard);
 
     /**
-     * 获取指定牌型的所有组合牌
+     * 获取指定牌型的所有组合牌，不区分花色的组合，如有需要自行替换
      */
     List<SingleCardType> getSingleCardType(CombinationCard combinationCard);
 }

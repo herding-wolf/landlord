@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Poker {
+public class Poker implements Comparable<Poker> {
 
     public Poker(PokerNumer pokerNumer) {
         this.pokerNumer = pokerNumer;
@@ -33,4 +33,8 @@ public class Poker {
      */
     private PokerType pokerType;
 
+    @Override
+    public int compareTo(Poker o) {
+        return pokerNumer.compareTo(o.getPokerNumer());
+    }
 }

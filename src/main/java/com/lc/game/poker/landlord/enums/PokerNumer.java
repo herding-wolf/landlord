@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 扑克牌数字枚举
+ * 扑克牌数字枚举，顺序不能变
  *
  * @author HerdingWolf
  * @date 2020/10/20
@@ -13,30 +13,30 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PokerNumer {
 
-    ACE(12, "A"),
-    TWO(13, "2"),
-    THREE(1, "3"),
-    FOUR(2, "4"),
-    FIVE(3, "5"),
-    SIX(4, "6"),
-    SEVEN(5, "7"),
-    EIGHT(6, "8"),
-    NINE(7, "9"),
-    TEN(8, "10"),
-    Jack(9, "J"),
-    Queen(10, "Q"),
-    King(11, "K"),
+    THREE(3, "3"),
+    FOUR(4, "4"),
+    FIVE(5, "5"),
+    SIX(6, "6"),
+    SEVEN(7, "7"),
+    EIGHT(8, "8"),
+    NINE(9, "9"),
+    TEN(10, "10"),
+    Jack(11, "J"),
+    Queen(12, "Q"),
+    King(13, "K"),
+    ACE(1, "A"),
+    TWO(2, "2"),
     BLACK_JOKER(14, "小王"),
     RED_JOKER(15, "大王"),
     ;
 
     /**
-     * 大小顺序
+     * 扑克牌对应数字
      */
-    private int sizeOrder;
+    private int number;
 
     /**
-     * 对应的牌
+     * 对应的牌说明
      */
     private String desc;
 

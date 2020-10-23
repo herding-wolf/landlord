@@ -31,15 +31,7 @@ public class BombCardTypeParser implements CardTypeParser {
         hashJokerBomb(combinationCard);
 
         // 是否有普通炸弹
-        Map<PokerNumer, Long> pokerNumberMap = combinationCard.getPokerNumberMap();
-        Set<Map.Entry<PokerNumer, Long>> entrySet = pokerNumberMap.entrySet();
-        for (Map.Entry<PokerNumer, Long> entry : entrySet) {
-            if (Objects.equals(4L, entry.getValue())) {
-                return true;
-            }
-        }
-
-        return false;
+        return combinationCard.getPokerNumberMap().values().stream().filter(t -> Objects.equals(4L, t)).count() > 0;
     }
 
     @Override
@@ -50,16 +42,10 @@ public class BombCardTypeParser implements CardTypeParser {
             result.add(new SingleCardType().setPokerList(pokers));
         }
 
+        Map<PokerNumer, List<Poker>> pokerMap = combinationCard.getPokerMap();
         List<SingleCardType> list = combinationCard.getPokerNumberMap().entrySet().stream()
                 .filter(entry -> Objects.equals(4L, entry.getValue()))
-                .map(entry -> {
-                    List<Poker> pokers = Lists.newArrayList(
-                            new Poker(entry.getKey(), PokerType.SPADE),
-                            new Poker(entry.getKey(), PokerType.HEART),
-                            new Poker(entry.getKey(), PokerType.DIAMOND),
-                            new Poker(entry.getKey(), PokerType.CLUB));
-                    return new SingleCardType().setPokerList(pokers);
-                })
+                .map(entry -> new SingleCardType(pokerMap.get(entry.getKey()), getCardType()))
                 .collect(Collectors.toList());
         result.addAll(list);
         return result;
@@ -79,6 +65,6 @@ public class BombCardTypeParser implements CardTypeParser {
 
     @Override
     public int compare(SingleCardType o1, SingleCardType o2) {
-        return o1.getPokerList().get(0).getPokerNumer().getSizeOrder() - o2.getPokerList().get(0).getPokerNumer().getSizeOrder();
+        return o1.getPokerList().get(0).compareTo(o2.getPokerList().get(0));
     }
 }

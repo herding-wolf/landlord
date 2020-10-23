@@ -9,9 +9,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +34,7 @@ public class CombinationCard {
 
     public CombinationCard(List<Poker> pokerList) {
         this.pokerList = pokerList;
+        Collections.sort(this.pokerList);
     }
 
     /**
@@ -41,6 +42,10 @@ public class CombinationCard {
      */
     public boolean hasCardType(CardType cardType) {
         return CardTypeParserFactory.getCardTypeParser(cardType).hasCardType(this);
+    }
+
+    public int getSize() {
+        return pokerList.size();
     }
 
     public Map<PokerNumer, List<Poker>> getPokerMap() {
