@@ -3,7 +3,9 @@ package com.lc.game.poker.landlord.entity;
 import com.lc.game.poker.landlord.enums.CardType;
 import com.lc.game.poker.landlord.enums.PlayerType;
 import com.lc.game.poker.landlord.enums.PokerNumer;
+import com.lc.game.poker.landlord.factory.CardTypeParserFactory;
 import com.lc.game.poker.landlord.utils.CardTypeUtil;
+import com.lc.game.poker.landlord.utils.Lists;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -76,6 +78,7 @@ public class ClassicGame {
             Arrays.stream(CardType.values()).forEach(cardType -> map.put(cardType, false));
         });
 
+        // 飞机、连队、顺子一起解析牌型
         List<List<PokerNumer>> straight = CardTypeUtil.getMaxSerialCards(combinationCard, CardType.STRAIGHT);
         List<List<PokerNumer>> serialPair = CardTypeUtil.getMaxSerialCards(combinationCard, CardType.SERIAL_PAIR);
         List<List<PokerNumer>> planeWith = CardTypeUtil.getMaxSerialCards(combinationCard, CardType.PLANE_WITH);
@@ -83,6 +86,15 @@ public class ClassicGame {
         straight.stream().flatMap(List::stream).forEach(t -> result.get(t).put(CardType.STRAIGHT, true));
         serialPair.stream().flatMap(List::stream).forEach(t -> result.get(t).put(CardType.SERIAL_PAIR, true));
         planeWith.stream().flatMap(List::stream).forEach(t -> result.get(t).put(CardType.PLANE_WITH, true));
+
+        // 循环解析炸弹、四带、三带、对子、单牌牌型
+        Arrays.stream(PokerNumer.values()).forEach(pokerNumer -> {
+            List<CardType> cardTypes = Lists.newArrayList(CardType.BOMB, CardType.FOUR_WITH, CardType.THREE_WITH, CardType.PAIR, CardType.SINGLE);
+            cardTypes.forEach(cardType -> {
+                boolean flag = CardTypeParserFactory.getCardTypeParser(cardType).hasCardType(combinationCard, pokerNumer);
+                result.get(pokerNumer).put(cardType, flag);
+            });
+        });
         return result;
     }
 

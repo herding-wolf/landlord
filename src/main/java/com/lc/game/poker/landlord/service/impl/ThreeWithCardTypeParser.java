@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @author HerdingWolf
  * @date 2020/10/23
  */
-public class ThreeWithCardTypeParser implements CardTypeParser {
+public class ThreeWithCardTypeParser extends BaseCardTypeParser implements CardTypeParser {
 
     @Override
     public CardType getCardType() {
@@ -27,12 +27,16 @@ public class ThreeWithCardTypeParser implements CardTypeParser {
     }
 
     @Override
-    public boolean hasCardType(CombinationCard combinationCard) {
-        return combinationCard.getPokerNumberMap().values().stream().filter(t -> Objects.equals(3L, t)).count() > 0;
+    public boolean hasCardType(CombinationCard combinationCard, PokerNumer pokerNumer) {
+        Map<PokerNumer, Long> pokerNumberMap = combinationCard.getPokerNumberMap();
+        if (Objects.nonNull(pokerNumer)) {
+            return pokerNumberMap.containsKey(pokerNumer) && pokerNumberMap.get(pokerNumer) >= 3;
+        }
+        return pokerNumberMap.values().stream().filter(t -> Objects.equals(3L, t)).count() > 0;
     }
 
     @Override
-    public List<SingleCardType> getSingleCardType(CombinationCard combinationCard) {
+    public List<SingleCardType> getSingleCardTypes(CombinationCard combinationCard) {
         Map<PokerNumer, List<Poker>> pokerMap = combinationCard.getPokerMap();
         return combinationCard.getPokerNumberMap().entrySet().stream()
                 .filter(entry -> Objects.equals(3L, entry.getValue()))
@@ -42,14 +46,6 @@ public class ThreeWithCardTypeParser implements CardTypeParser {
 
     @Override
     public int compare(SingleCardType o1, SingleCardType o2) {
-        return getMaxPokerNumber(o1).compareTo(getMaxPokerNumber(o2));
-    }
-
-    private PokerNumer getMaxPokerNumber(SingleCardType singleCardType) {
-        return singleCardType.getPokerNumberMap().entrySet().stream()
-                .filter(entry -> Objects.equals(3L, entry.getValue()))
-                .map(Map.Entry::getKey)
-                .max(Comparator.comparing(PokerNumer::ordinal))
-                .get();
+        return getMainMaxPokerNumber(o1, 3L).compareTo(getMainMaxPokerNumber(o2, 3L));
     }
 }

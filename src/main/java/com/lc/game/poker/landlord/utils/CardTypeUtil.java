@@ -24,25 +24,9 @@ public class CardTypeUtil {
      */
     public static List<SingleCardType> getSerialCards(CombinationCard combinationCard, CardType cardType) {
         // 连续张数
-        int serialNum;
+        int serialNum = getSerialNum(cardType);
         // 重复张数
-        int repeatNum;
-        switch (cardType) {
-            case STRAIGHT:
-                serialNum = 5;
-                repeatNum = 1;
-                break;
-            case SERIAL_PAIR:
-                serialNum = 3;
-                repeatNum = 2;
-                break;
-            case PLANE_WITH:
-                serialNum = 2;
-                repeatNum = 3;
-                break;
-            default:
-                throw new RuntimeException("牌型错误");
-        }
+        int repeatNum = getRepeatNum(cardType);
 
         if (combinationCard.getPokerList().size() < serialNum) {
             return Collections.emptyList();

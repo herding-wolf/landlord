@@ -2,10 +2,9 @@ package com.lc.game.poker.landlord.factory;
 
 import com.lc.game.poker.landlord.enums.CardType;
 import com.lc.game.poker.landlord.service.CardTypeParser;
-import com.lc.game.poker.landlord.service.impl.BombCardTypeParser;
-import com.lc.game.poker.landlord.service.impl.PairCardTypeParser;
+import com.lc.game.poker.landlord.service.impl.*;
+import com.lc.game.poker.landlord.utils.Lists;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -25,9 +24,16 @@ public class CardTypeParserFactory {
      * 初始化加载所有牌型解析器
      */
     static {
-        List<CardTypeParser> cardTypeParserList = new ArrayList<>();
-        cardTypeParserList.add(new BombCardTypeParser());
-        cardTypeParserList.add(new PairCardTypeParser());
+        List<CardTypeParser> cardTypeParserList = Lists.newArrayList(
+                new BombCardTypeParser(),
+                new FourWithCardTypeParser(),
+                new PairCardTypeParser(),
+                new PlaneWithCardTypeParser(),
+                new SerialPairCardTypeParser(),
+                new SingleCardTypeParser(),
+                new StrainghtCardTypeParser(),
+                new ThreeWithCardTypeParser()
+        );
         cardTypeParserMap = cardTypeParserList.stream().collect(Collectors.toMap(CardTypeParser::getCardType, Function.identity()));
     }
 

@@ -5,11 +5,13 @@ import com.lc.game.poker.landlord.entity.Poker;
 import com.lc.game.poker.landlord.entity.SingleCardType;
 import com.lc.game.poker.landlord.enums.CardType;
 import com.lc.game.poker.landlord.enums.PokerNumer;
-import com.lc.game.poker.landlord.enums.PokerType;
 import com.lc.game.poker.landlord.service.CardTypeParser;
 import com.lc.game.poker.landlord.utils.Lists;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -26,16 +28,24 @@ public class BombCardTypeParser implements CardTypeParser {
     }
 
     @Override
-    public boolean hasCardType(CombinationCard combinationCard) {
-        // 是否有王炸
-        hashJokerBomb(combinationCard);
+    public boolean hasCardType(CombinationCard combinationCard, PokerNumer pokerNumer) {
+        Map<PokerNumer, Long> pokerNumberMap = combinationCard.getPokerNumberMap();
+        if (Objects.nonNull(pokerNumer)) {
+            if (PokerNumer.BLACK_JOKER.compareTo(pokerNumer) <= 0) {
+                return hashJokerBomb(combinationCard);
+            }
+            return pokerNumberMap.containsKey(pokerNumer) && pokerNumberMap.get(pokerNumer) >= 4;
+        }
 
-        // 是否有普通炸弹
-        return combinationCard.getPokerNumberMap().values().stream().filter(t -> Objects.equals(4L, t)).count() > 0;
+        if (hashJokerBomb(combinationCard)) {
+            return true;
+        }
+
+        return pokerNumberMap.values().stream().filter(t -> Objects.equals(4L, t)).count() > 0;
     }
 
     @Override
-    public List<SingleCardType> getSingleCardType(CombinationCard combinationCard) {
+    public List<SingleCardType> getSingleCardTypes(CombinationCard combinationCard) {
         List<SingleCardType> result = new ArrayList<>();
         if (hashJokerBomb(combinationCard)) {
             List<Poker> pokers = Lists.newArrayList(new Poker(PokerNumer.RED_JOKER), new Poker(PokerNumer.BLACK_JOKER));

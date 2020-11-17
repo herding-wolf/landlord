@@ -25,8 +25,12 @@ public class PairCardTypeParser implements CardTypeParser {
     }
 
     @Override
-    public boolean hasCardType(CombinationCard combinationCard) {
+    public boolean hasCardType(CombinationCard combinationCard, PokerNumer pokerNumer) {
         Map<PokerNumer, Long> pokerNumberMap = combinationCard.getPokerNumberMap();
+        if (Objects.nonNull(pokerNumer)) {
+            return pokerNumberMap.containsKey(pokerNumer) && pokerNumberMap.get(pokerNumer) >= 2;
+        }
+
         Set<Map.Entry<PokerNumer, Long>> entrySet = pokerNumberMap.entrySet();
         for (Map.Entry<PokerNumer, Long> entry : entrySet) {
             if (Objects.equals(2L, entry.getValue())) {
@@ -37,7 +41,7 @@ public class PairCardTypeParser implements CardTypeParser {
     }
 
     @Override
-    public List<SingleCardType> getSingleCardType(CombinationCard combinationCard) {
+    public List<SingleCardType> getSingleCardTypes(CombinationCard combinationCard) {
         Map<PokerNumer, List<Poker>> pokerMap = combinationCard.getPokerMap();
         return combinationCard.getPokerNumberMap().entrySet().stream()
                 .filter(entry -> entry.getValue() > 2)

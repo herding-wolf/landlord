@@ -3,6 +3,7 @@ package com.lc.game.poker.landlord.service.impl;
 import com.lc.game.poker.landlord.entity.CombinationCard;
 import com.lc.game.poker.landlord.entity.SingleCardType;
 import com.lc.game.poker.landlord.enums.CardType;
+import com.lc.game.poker.landlord.enums.PokerNumer;
 import com.lc.game.poker.landlord.service.CardTypeParser;
 import com.lc.game.poker.landlord.utils.Assert;
 import com.lc.game.poker.landlord.utils.CardTypeUtil;
@@ -24,12 +25,12 @@ public class PlaneWithCardTypeParser implements CardTypeParser {
     }
 
     @Override
-    public boolean hasCardType(CombinationCard combinationCard) {
-        return !getSingleCardType(combinationCard).isEmpty();
+    public boolean hasCardType(CombinationCard combinationCard, PokerNumer pokerNumer) {
+        return !getSingleCardTypes(combinationCard).isEmpty();
     }
 
     @Override
-    public List<SingleCardType> getSingleCardType(CombinationCard combinationCard) {
+    public List<SingleCardType> getSingleCardTypes(CombinationCard combinationCard) {
         return CardTypeUtil.getSerialCards(combinationCard, getCardType());
     }
 

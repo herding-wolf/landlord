@@ -49,14 +49,14 @@ public class CombinationCard {
     }
 
     public Map<PokerNumer, List<Poker>> getPokerMap() {
-        if (CommonUtil.isEmpty(pokerList, pokerMap)) {
+        if (CommonUtil.isEmpty(pokerMap)) {
             pokerMap = pokerList.stream().collect(Collectors.groupingBy(Poker::getPokerNumer));
         }
         return pokerMap;
     }
 
     public Map<PokerNumer, Long> getPokerNumberMap() {
-        if (CommonUtil.isEmpty(pokerList, pokerNumberMap)) {
+        if (CommonUtil.isEmpty(pokerNumberMap)) {
             pokerNumberMap = pokerList.stream().collect(Collectors.groupingBy(Poker::getPokerNumer, Collectors.counting()));
         }
         return pokerNumberMap;

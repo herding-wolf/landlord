@@ -3,10 +3,12 @@ package com.lc.game.poker.landlord.service.impl;
 import com.lc.game.poker.landlord.entity.CombinationCard;
 import com.lc.game.poker.landlord.entity.SingleCardType;
 import com.lc.game.poker.landlord.enums.CardType;
+import com.lc.game.poker.landlord.enums.PokerNumer;
 import com.lc.game.poker.landlord.service.CardTypeParser;
 import com.lc.game.poker.landlord.utils.Lists;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -23,12 +25,15 @@ public class SingleCardTypeParser implements CardTypeParser {
     }
 
     @Override
-    public boolean hasCardType(CombinationCard combinationCard) {
+    public boolean hasCardType(CombinationCard combinationCard, PokerNumer pokerNumer) {
+        if (Objects.nonNull(pokerNumer)) {
+            return combinationCard.getPokerNumberMap().containsKey(pokerNumer) && combinationCard.getPokerNumberMap().get(pokerNumer) >= 1;
+        }
         return combinationCard.getPokerList().size() >= 1;
     }
 
     @Override
-    public List<SingleCardType> getSingleCardType(CombinationCard combinationCard) {
+    public List<SingleCardType> getSingleCardTypes(CombinationCard combinationCard) {
         return combinationCard.getPokerList().stream()
                 .map(t -> new SingleCardType(Lists.newArrayList(t), getCardType()))
                 .collect(Collectors.toList());
