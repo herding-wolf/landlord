@@ -4,6 +4,7 @@ import com.lc.game.poker.landlord.entity.Poker;
 import com.lc.game.poker.landlord.entity.SingleCardType;
 import com.lc.game.poker.landlord.enums.CardType;
 import com.lc.game.poker.landlord.enums.PokerNumer;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class CardTypeParseTest {
 
-//    @Test
+    @Test
     public void test() {
         // 识别牌型
         // 王炸

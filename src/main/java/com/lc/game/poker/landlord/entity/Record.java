@@ -24,6 +24,16 @@ public class Record {
     private Integer round;
 
     /**
+     * 是否这个回合最先出牌
+     */
+    private Boolean isFirst;
+
+    /**
+     * 是否是队友
+     */
+    private Boolean isFellowPlayer;
+
+    /**
      * 游戏玩家类型
      */
     private PlayerType playerType;

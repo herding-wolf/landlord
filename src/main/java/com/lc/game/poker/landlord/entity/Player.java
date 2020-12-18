@@ -54,4 +54,8 @@ public class Player {
         this.playerType = playerType;
         this.remain = playerType.getNum();
     }
+
+    public void removePokerNumerCardType(PokerNumer pokerNumer, CardType... cardType) {
+        // TODO 删除指定扑克牌牌型
+    }
 }

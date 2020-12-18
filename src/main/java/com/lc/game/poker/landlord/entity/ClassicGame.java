@@ -4,15 +4,13 @@ import com.lc.game.poker.landlord.enums.CardType;
 import com.lc.game.poker.landlord.enums.PlayerType;
 import com.lc.game.poker.landlord.enums.PokerNumer;
 import com.lc.game.poker.landlord.factory.CardTypeParserFactory;
+import com.lc.game.poker.landlord.utils.Assert;
 import com.lc.game.poker.landlord.utils.CardTypeUtil;
 import com.lc.game.poker.landlord.utils.Lists;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 经典斗地主
@@ -98,19 +96,62 @@ public class ClassicGame {
         return result;
     }
 
+    public void removePokerNumerCardType(PokerNumer pokerNumer, CardType... cardType) {
+        // TODO 删除指定扑克牌牌型
+    }
+
     /**
      * 推算牌
      */
     public void calculation(Record record) {
         recordList.add(record);
+        // 自己出牌不用推算
         if (this.master == record.getPlayerType()) {
             return;
         }
 
+        // 先按照出牌数量去掉不可能出现的牌型
+        SingleCardType singleCardType = record.getSingleCardType();
+        Map<PokerNumer, Long> pokerNumberMap = singleCardType.getPokerNumberMap();
+        Map<PokerNumer, Long> masterProkerNumberMap = getMasterPlayer().getNotPlayCard().getPokerNumberMap();
+        pokerNumberMap.forEach((pokerNumer, number) -> {
+            Long masterNumber = Optional.ofNullable(masterProkerNumberMap.get(pokerNumer)).orElse(0L);
+            Long sumNumber = number + masterNumber;
+
+            Assert.isTure(sumNumber < 4, String.format("扑克牌：%s 所剩大于%s张", pokerNumer.getDesc(), 4));
+
+            removePokerNumerCardType(pokerNumer, CardType.BOMB, CardType.FOUR_WITH);
+            if (PokerNumer.BLACK_JOKER.compareTo(pokerNumer) <= 0) {
+
+            }
+            if (sumNumber == 3) {
+                // 其他玩家出了一张单牌或者带了一个单牌
+                // 这个玩家这张牌没有飞机、三带
+                Player player = getPlayer(record.getPlayerType());
+                player.removePokerNumerCardType(pokerNumer, CardType.PLANE_WITH, CardType.THREE_WITH);
+                if (record.getIsFirst()) {
+                    // 如果是地主主动出牌，则认为他没有对子和单牌
+                    if (PlayerType.LANDLORD.equals(record.getPlayerType())) {
+                        player.removePokerNumerCardType(pokerNumer, CardType.PAIR, CardType.SINGLE);
+                    }
+
+                    //
+                    if (PlayerType.LAST.equals(record.getPlayerType())) {
+
+                    }
+                }
+            }
+        });
+
+
     }
 
     public Player getMasterPlayer() {
-        switch (master) {
+        return getPlayer(this.master);
+    }
+
+    public Player getPlayer(PlayerType playerType) {
+        switch (playerType) {
             case LAST:
                 return this.lastPlayer;
             case NEXT:
