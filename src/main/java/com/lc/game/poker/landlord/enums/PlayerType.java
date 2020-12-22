@@ -1,5 +1,6 @@
 package com.lc.game.poker.landlord.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -8,6 +9,8 @@ import lombok.Getter;
  * @author HerdingWolf
  * @date 2020/11/8
  */
+@Getter
+@AllArgsConstructor
 public enum PlayerType {
 
     /**
@@ -28,10 +31,5 @@ public enum PlayerType {
     /**
      * 一共牌的张数
      */
-    @Getter
     private int num;
-
-    PlayerType(int num) {
-        this.num = num;
-    }
 }

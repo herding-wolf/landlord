@@ -1,6 +1,7 @@
 package com.lc.game.poker.landlord.entity;
 
 import com.lc.game.poker.landlord.enums.CardType;
+import com.lc.game.poker.landlord.enums.LevelEnum;
 import com.lc.game.poker.landlord.enums.PlayerType;
 import com.lc.game.poker.landlord.enums.PokerNumer;
 import lombok.AllArgsConstructor;
@@ -55,7 +56,11 @@ public class Player {
         this.remain = playerType.getNum();
     }
 
-    public void removePokerNumerCardType(PokerNumer pokerNumer, CardType... cardType) {
-        // TODO 删除指定扑克牌牌型
+    public void setPokerCardTypeLevel(PokerNumer pokerNumer, CardType... cardTypes) {
+        setPokerCardTypeLevel(pokerNumer, LevelEnum.L_9, cardTypes);
+    }
+
+    public void setPokerCardTypeLevel(PokerNumer pokerNumer, LevelEnum levelEnum, CardType... cardTypes) {
+        // TODO 设置指定扑克牌牌型存在级别
     }
 }

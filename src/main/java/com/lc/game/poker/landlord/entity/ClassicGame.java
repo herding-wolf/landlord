@@ -1,6 +1,7 @@
 package com.lc.game.poker.landlord.entity;
 
 import com.lc.game.poker.landlord.enums.CardType;
+import com.lc.game.poker.landlord.enums.LevelEnum;
 import com.lc.game.poker.landlord.enums.PlayerType;
 import com.lc.game.poker.landlord.enums.PokerNumer;
 import com.lc.game.poker.landlord.factory.CardTypeParserFactory;
@@ -96,8 +97,17 @@ public class ClassicGame {
         return result;
     }
 
-    public void removePokerNumerCardType(PokerNumer pokerNumer, CardType... cardType) {
+    public void setPokerCardTypeLevel(PokerNumer pokerNumer, CardType... cardType) {
         // TODO 删除指定扑克牌牌型
+    }
+
+    public void setPokerCardTypeLevel(PokerNumer pokerNumer, LevelEnum level, CardType... cardType) {
+        // TODO 删除指定扑克牌牌型
+    }
+
+    public Map<PokerNumer, Long> getRecordPokerNumberMap() {
+        // TODO 获取历史出牌扑克数map
+        return null;
     }
 
     /**
@@ -111,34 +121,87 @@ public class ClassicGame {
         }
 
         // 先按照出牌数量去掉不可能出现的牌型
+        Player player = getPlayer(record.getPlayerType());
         SingleCardType singleCardType = record.getSingleCardType();
         Map<PokerNumer, Long> pokerNumberMap = singleCardType.getPokerNumberMap();
         Map<PokerNumer, Long> masterProkerNumberMap = getMasterPlayer().getNotPlayCard().getPokerNumberMap();
         pokerNumberMap.forEach((pokerNumer, number) -> {
             Long masterNumber = Optional.ofNullable(masterProkerNumberMap.get(pokerNumer)).orElse(0L);
-            Long sumNumber = number + masterNumber;
+            Long recordNumber = Optional.ofNullable(getRecordPokerNumberMap().get(pokerNumberMap)).orElse(0L);
+            Long sumNumber = number + masterNumber + recordNumber;
 
             Assert.isTure(sumNumber < 4, String.format("扑克牌：%s 所剩大于%s张", pokerNumer.getDesc(), 4));
-
-            removePokerNumerCardType(pokerNumer, CardType.BOMB, CardType.FOUR_WITH);
+            // 肯定没有炸弹和四带
+            setPokerCardTypeLevel(pokerNumer, LevelEnum.L_10, CardType.BOMB, CardType.FOUR_WITH);
             if (PokerNumer.BLACK_JOKER.compareTo(pokerNumer) <= 0) {
 
             }
             if (sumNumber == 3) {
-                // 其他玩家出了一张单牌或者带了一个单牌
+                // 其他玩家出了一张单牌或者带了一个单牌，或顺子
                 // 这个玩家这张牌没有飞机、三带
-                Player player = getPlayer(record.getPlayerType());
-                player.removePokerNumerCardType(pokerNumer, CardType.PLANE_WITH, CardType.THREE_WITH);
-                if (record.getIsFirst()) {
-                    // 如果是地主主动出牌，则认为他没有对子和单牌
-                    if (PlayerType.LANDLORD.equals(record.getPlayerType())) {
-                        player.removePokerNumerCardType(pokerNumer, CardType.PAIR, CardType.SINGLE);
-                    }
+                if (CardType.STRAIGHT.equals(record.getSingleCardType())) {
+                    // TODO 先认为顺子出过的牌不再包含飞机和三带
+                    player.setPokerCardTypeLevel(pokerNumer, CardType.PLANE_WITH, CardType.THREE_WITH);
+                } else {
+                    player.setPokerCardTypeLevel(pokerNumer, CardType.PLANE_WITH, CardType.THREE_WITH);
+                    // TODO 先粗略推算这个玩家这张牌没有对子和单牌
+                    player.setPokerCardTypeLevel(pokerNumer, LevelEnum.L_7, CardType.PAIR, CardType.SINGLE);
+//                    if (record.getIsFirst()) {
+//                        // 如果是地主主动出牌，则认为他没有对子和单牌
+//                        if (PlayerType.LANDLORD.equals(record.getPlayerType())) {
+//                            player.removePokerNumerCardType(pokerNumer, CardType.PAIR, CardType.SINGLE);
+//                        }
+//
+//                        // 农名上家主动出牌
+//                        if (PlayerType.LAST.equals(record.getPlayerType())) {
+//                            player.removePokerNumerCardType(pokerNumer, CardType.PAIR);
+//                        }
+//                    }
+                }
+            }
 
-                    //
-                    if (PlayerType.LAST.equals(record.getPlayerType())) {
+            else if (sumNumber == 2) {
+                setPokerCardTypeLevel(pokerNumer, LevelEnum.L_10, CardType.PLANE_WITH, CardType.THREE_WITH);
+                if (PokerNumer.FOUR.compareTo(pokerNumer) >= 0) {
+                    Arrays.stream(PokerNumer.values())
+                            .filter(t -> t.compareTo(pokerNumer) < 0)
+                            .forEach(t -> setPokerCardTypeLevel(t, LevelEnum.L_10, CardType.PLANE_WITH));
+                }
+                if (PokerNumer.KING.compareTo(pokerNumer) <= 0 && PokerNumer.ACE.compareTo(pokerNumer) >= 0) {
+                    Arrays.stream(PokerNumer.values())
+                            .filter(t -> t.compareTo(pokerNumer) > 0)
+                            .forEach(t -> setPokerCardTypeLevel(t, LevelEnum.L_10, CardType.PLANE_WITH));
+                }
+                if (number == 2) {
+                    player.setPokerCardTypeLevel(pokerNumer, CardType.PAIR, CardType.SINGLE);
+                }
+            }
 
-                    }
+            else if (sumNumber == 1) {
+                setPokerCardTypeLevel(pokerNumer, LevelEnum.L_10, CardType.PLANE_WITH, CardType.THREE_WITH, CardType.SERIAL_PAIR);
+                if (PokerNumer.FIVE.compareTo(pokerNumer) >= 0) {
+                    Arrays.stream(PokerNumer.values())
+                            .filter(t -> t.compareTo(pokerNumer) < 0)
+                            .forEach(t -> setPokerCardTypeLevel(t, LevelEnum.L_10, CardType.PLANE_WITH, CardType.SERIAL_PAIR));
+                }
+                if (PokerNumer.QUEEN.compareTo(pokerNumer) <= 0 && PokerNumer.ACE.compareTo(pokerNumer) >= 0) {
+                    Arrays.stream(PokerNumer.values())
+                            .filter(t -> t.compareTo(pokerNumer) > 0)
+                            .forEach(t -> setPokerCardTypeLevel(t, LevelEnum.L_10, CardType.PLANE_WITH, CardType.SERIAL_PAIR));
+                }
+            }
+
+            else if (sumNumber == 0) {
+                setPokerCardTypeLevel(pokerNumer, LevelEnum.L_10, CardType.values());
+                if (PokerNumer.SEVEN.compareTo(pokerNumer) >= 0) {
+                    Arrays.stream(PokerNumer.values())
+                            .filter(t -> t.compareTo(pokerNumer) < 0)
+                            .forEach(t -> setPokerCardTypeLevel(t, LevelEnum.L_10, CardType.PLANE_WITH, CardType.SERIAL_PAIR, CardType.STRAIGHT));
+                }
+                if (PokerNumer.TEN.compareTo(pokerNumer) <= 0 && PokerNumer.ACE.compareTo(pokerNumer) >= 0) {
+                    Arrays.stream(PokerNumer.values())
+                            .filter(t -> t.compareTo(pokerNumer) > 0)
+                            .forEach(t -> setPokerCardTypeLevel(t, LevelEnum.L_10, CardType.PLANE_WITH, CardType.SERIAL_PAIR, CardType.STRAIGHT));
                 }
             }
         });
